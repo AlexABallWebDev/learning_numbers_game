@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -37,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     //maximum number that can be generated for the buttons (inclusive).
     private final int MAX_NUMBER = 10;
+
+    //number of times the user chose the bigger number.
+    private int userScore;
+
+    //number of times the  user has played
+    private int userTimesPlayed;
 
     /**
      * When created, this activity assigns the buttons new numbers and resets
@@ -59,9 +66,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //assign the two buttons to variables.
-        Button numButton1 = (Button) findViewById(R.id.numButton1);
-        Button numButton2 = (Button) findViewById(R.id.numButton2);
+        //assign user's score and times played to 0.
+        userScore = 0;
+        userTimesPlayed = 0;
+
+        //assign the two buttons to constants.
+        final Button numButton1 = (Button) findViewById(R.id.numButton1);
+        final Button numButton2 = (Button) findViewById(R.id.numButton2);
 
         //create Random object for this game.
         rand = new Random();
@@ -69,8 +80,48 @@ public class MainActivity extends AppCompatActivity {
         //generate numbers for the buttons and assign their text to those numbers.
         generateNumbers(numButton1, numButton2);
 
+        //add event listeners. When a button is clicked, the number in its text field
+        //is compared to the number in the other button's text field.
+        numButton1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                checkAnswer(numButton1, numButton2);
+            }
+        });
 
+        numButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                checkAnswer(numButton2, numButton1);
+            }
+        });
+    }
 
+    /**
+     * Checks if the user was correct by comparing the numbers in each button.
+     * The first parameter is the button that the user clicked. If that button's
+     * number is bigger, then the user's score will increase.
+     *
+     * @param b1 The button clicked by the user.
+     * @param b2 The other button.
+     */
+    private void checkAnswer(Button b1, Button b2) {
+        //increment the number of times the user has played.
+        userTimesPlayed++;
+
+        //get the numbers from the buttons
+        int userNum = Integer.parseInt(b1.getText().toString());
+        int otherNum = Integer.parseInt(b2.getText().toString());
+
+        //check if the number the user clicked is bigger than the other number.
+        if (userNum > otherNum) {
+            //if the button that the user clicked had a bigger number,
+            //increase their score and show a "correct" toast.
+            userScore++;
+
+            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+        } else {
+            //otherwise, show a "wrong" toast.
+            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -80,8 +131,7 @@ public class MainActivity extends AppCompatActivity {
      * @param b1 One of two buttons to have a new number generated for.
      * @param b2 One of two buttons to have a new number generated for.
      */
-    private void generateNumbers(Button b1, Button b2)
-    {
+    private void generateNumbers(Button b1, Button b2) {
         //randomly generate numbers between 1 and MAX_NUMBER (default 10).
         int num1 = rand.nextInt(MAX_NUMBER) + 1;
         int num2 = rand.nextInt(MAX_NUMBER) + 1;
