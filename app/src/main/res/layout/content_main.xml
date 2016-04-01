@@ -29,23 +29,27 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/numButton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="getNum1" />
+            android:text="" />
 
         <Button
+            android:id="@+id/numButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="getNum2" />
+            android:text="" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/userScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Score: 10" />
+        android:text="@string/initial_score" />
 
     <TextView
+        android:id="@+id/userTimesPlayed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Times Played: 15" />
+        android:text="@string/initial_times_played" />
 </LinearLayout>
