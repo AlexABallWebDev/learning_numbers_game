@@ -2,7 +2,7 @@
     <string name="app_name">Learning Numbers Game</string>
     <string name="instructions">How to play: Touch the bigger number! The number of
             times that you were right is shown below.</string>
-    <string name="initial_score">Score: 0</string>
-    <string name="initial_times_played">Times Played: 0</string>
+    <string name="score_text">Score: </string>
+    <string name="times_played_text">Times Played: </string>
     <string name="action_settings">Settings</string>
 </resources>

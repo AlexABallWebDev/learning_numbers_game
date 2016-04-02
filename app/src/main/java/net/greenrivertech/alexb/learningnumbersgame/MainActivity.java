@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -36,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
     //Random object for generating the numbers in the game.
     private Random rand;
 
-    //maximum number that can be generated for the buttons (inclusive).
-    private final int MAX_NUMBER = 10;
-
     //number of times the user chose the bigger number.
     private int userScore;
 
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * When created, this activity assigns the buttons new numbers and resets
      * the players score.
-     * @param savedInstanceState
+     * @param savedInstanceState The saved state of the activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
         userScore = 0;
         userTimesPlayed = 0;
 
+        //assign the score and timesPlayed TextViews to constants
+        final TextView scoreView = (TextView) findViewById(R.id.userScore);
+        final TextView timesPlayedView = (TextView) findViewById(R.id.userTimesPlayed);
+
         //assign the two buttons to constants.
         final Button numButton1 = (Button) findViewById(R.id.numButton1);
         final Button numButton2 = (Button) findViewById(R.id.numButton2);
@@ -85,12 +87,14 @@ public class MainActivity extends AppCompatActivity {
         numButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 checkAnswer(numButton1, numButton2);
+                updateScore(scoreView, timesPlayedView);
             }
         });
 
         numButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 checkAnswer(numButton2, numButton1);
+                updateScore(scoreView, timesPlayedView);
             }
         });
     }
@@ -125,6 +129,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Updates the score and times played views so the player can see them.
+     *
+     * @param scoreView The scoreView to be updated.
+     * @param timesPlayedView The timesPlayedView to be updated.
+     */
+    private void updateScore(TextView scoreView, TextView timesPlayedView) {
+        scoreView.setText(R.string.score_text + Integer.toString(userScore));
+        timesPlayedView.setText(R.string.times_played_text + Integer.toString(userTimesPlayed));
+    }
+
+    /**
      * Generates two numbers between 1 and 10 (inclusive) and assigns each button's
      * text to be one of the generated numbers.
      *
@@ -132,19 +147,22 @@ public class MainActivity extends AppCompatActivity {
      * @param b2 One of two buttons to have a new number generated for.
      */
     private void generateNumbers(Button b1, Button b2) {
-        //randomly generate numbers between 1 and MAX_NUMBER (default 10).
-        int num1 = rand.nextInt(MAX_NUMBER) + 1;
-        int num2 = rand.nextInt(MAX_NUMBER) + 1;
+        //get the maximum number that can be generated in the game.
+        int maxNumber = R.integer.max_number;
+
+        //randomly generate numbers between 1 and maxNumber (default 10).
+        int num1 = rand.nextInt(maxNumber) + 1;
+        int num2 = rand.nextInt(maxNumber) + 1;
 
         //if the numbers are the same, try again until they are different.
         while (num1 == num2)
         {
-            num1 = rand.nextInt(MAX_NUMBER) + 1;
+            num1 = rand.nextInt(maxNumber) + 1;
         }
 
         //assign each button a number
-        b1.setText("" + num1);
-        b2.setText("" + num2);
+        b1.setText(Integer.toString(num1));
+        b2.setText(Integer.toString(num2));
     }
 
     @Override
