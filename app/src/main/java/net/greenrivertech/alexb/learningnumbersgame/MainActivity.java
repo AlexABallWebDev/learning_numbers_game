@@ -10,9 +10,8 @@
  */
 package net.greenrivertech.alexb.learningnumbersgame;
 
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -34,6 +33,10 @@ import java.util.Random;
  */
 public class MainActivity extends AppCompatActivity {
 
+    //resources object to access saved constants (such as the integer value
+    //for the maxNumber that can be generated in this game).
+    private Resources res;
+
     //Random object for generating the numbers in the game.
     private Random rand;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * When created, this activity assigns the buttons new numbers and resets
      * the players score.
+     *
      * @param savedInstanceState The saved state of the activity.
      */
     @Override
@@ -55,14 +59,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        //assign resources field
+        res = getResources();
 
         //assign user's score and times played to 0.
         userScore = 0;
@@ -71,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         //assign the score and timesPlayed TextViews to constants
         final TextView scoreView = (TextView) findViewById(R.id.userScore);
         final TextView timesPlayedView = (TextView) findViewById(R.id.userTimesPlayed);
+
+        //set score and timesPlayed textView
+        updateScore(scoreView, timesPlayedView);
 
         //assign the two buttons to constants.
         final Button numButton1 = (Button) findViewById(R.id.numButton1);
@@ -82,21 +83,28 @@ public class MainActivity extends AppCompatActivity {
         //generate numbers for the buttons and assign their text to those numbers.
         generateNumbers(numButton1, numButton2);
 
+        //check to make sure each button is not null, then
         //add event listeners. When a button is clicked, the number in its text field
         //is compared to the number in the other button's text field.
-        numButton1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                checkAnswer(numButton1, numButton2);
-                updateScore(scoreView, timesPlayedView);
-            }
-        });
+        if (numButton1 != null) {
+            numButton1.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    checkAnswer(numButton1, numButton2);
+                    updateScore(scoreView, timesPlayedView);
+                    generateNumbers(numButton1, numButton2);
+                }
+            });
+        }
 
-        numButton2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                checkAnswer(numButton2, numButton1);
-                updateScore(scoreView, timesPlayedView);
-            }
-        });
+        if (numButton2 != null) {
+            numButton2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    checkAnswer(numButton2, numButton1);
+                    updateScore(scoreView, timesPlayedView);
+                    generateNumbers(numButton1, numButton2);
+                }
+            });
+        }
     }
 
     /**
@@ -121,22 +129,30 @@ public class MainActivity extends AppCompatActivity {
             //increase their score and show a "correct" toast.
             userScore++;
 
-            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.correct), Toast.LENGTH_SHORT).show();
         } else {
             //otherwise, show a "wrong" toast.
-            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
      * Updates the score and times played views so the player can see them.
      *
-     * @param scoreView The scoreView to be updated.
+     * @param scoreView       The scoreView to be updated.
      * @param timesPlayedView The timesPlayedView to be updated.
      */
     private void updateScore(TextView scoreView, TextView timesPlayedView) {
-        scoreView.setText(R.string.score_text + Integer.toString(userScore));
-        timesPlayedView.setText(R.string.times_played_text + Integer.toString(userTimesPlayed));
+        //create the text that will be shown. In this case, the text will look like "Score: 2".
+        String userScoreString = String.format("%s %d",
+                getString(R.string.score_text), userScore);
+
+        String userTimesPlayedString = String.format("%s %d",
+                getString(R.string.times_played_text), userTimesPlayed);
+
+        //update the textViews
+        scoreView.setText(userScoreString);
+        timesPlayedView.setText(userTimesPlayedString);
     }
 
     /**
@@ -148,21 +164,20 @@ public class MainActivity extends AppCompatActivity {
      */
     private void generateNumbers(Button b1, Button b2) {
         //get the maximum number that can be generated in the game.
-        int maxNumber = R.integer.max_number;
+        int maxNumber = res.getInteger(R.integer.max_number);
 
         //randomly generate numbers between 1 and maxNumber (default 10).
         int num1 = rand.nextInt(maxNumber) + 1;
         int num2 = rand.nextInt(maxNumber) + 1;
 
         //if the numbers are the same, try again until they are different.
-        while (num1 == num2)
-        {
+        while (num1 == num2) {
             num1 = rand.nextInt(maxNumber) + 1;
         }
 
         //assign each button a number
-        b1.setText(Integer.toString(num1));
-        b2.setText(Integer.toString(num2));
+        b1.setText(String.format("%d", num1));
+        b2.setText(String.format("%d", num2));
     }
 
     @Override
